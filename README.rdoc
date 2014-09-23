@@ -12,6 +12,7 @@ Things you may want to cover:
 * Configuration
 
 * Database creation
+mysql -uroot -e "GRANT ALL ON totec.* TO totecer@localhost IDENTIFIED BY 'ZZ53HbhI';"
 
 * Database initialization
 
