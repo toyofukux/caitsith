@@ -4,6 +4,15 @@ module Totec
     formatter :json, Grape::Formatter::Jbuilder
     version '', using: :param
     resource :musics do
+      get '/times', jbuilder: 'totec/times.json' do
+        id = params[:id]
+        @times = PlayHistory.select("music_id, count(music_id) as times").group(:music_id).order("count(music_id) desc")
+        if id.blank?
+          @times = @times.limit(100)
+        else
+          @times = @times.where("music_id = #{id}")
+        end
+      end
       get '/', jbuilder: 'totec/musics.json' do
         artist_id = params[:artist_id]
         title = params[:title]
@@ -18,7 +27,9 @@ module Totec
         elsif artist_id.present?
           @musics = Music.order(:title).where("artist_id = #{artist_id}")
         elsif title.present?
-          @musics = Music.order(:title).where('title LIKE ?', "%#{title}%")
+          #TODO
+          #@musics = Music.order(:title).where('title LIKE ?', "%#{title}%")
+          @musics = Music.order(:title).limit(100)
         elsif limit.present?
           @musics = Music.order(:title).limit(limit)
         else
@@ -62,7 +73,13 @@ module Totec
       end
       delete '/:id' do
         Music.destroy(params[:id])
+        status 204
       end
+      post '/:id/play' do
+        PlayHistory.create(music_id: params[:id], created_at: Time.now)
+        status 204
+      end
+      
     end
     helpers do
       def music_exist?
