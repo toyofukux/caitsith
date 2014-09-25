@@ -38,3 +38,9 @@ gem 'unicorn'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 gem 'mysql2'
+gem 'grape', '0.9.0'
+gem 'grape-jbuilder'
+gem 'newrelic_rpm'
+gem 'postamt', '0.9.7'
+gem 'yajl-ruby'
+gem 'kaminari'
