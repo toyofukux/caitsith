@@ -18,4 +18,6 @@ gem 'mysql2', '0.3.16'
 gem 'grape', '0.9.0'
 gem 'grape-jbuilder'
 gem 'newrelic_rpm', group: :production
+gem 'postamt', '0.9.7'
+gem 'yajl-ruby'
 
