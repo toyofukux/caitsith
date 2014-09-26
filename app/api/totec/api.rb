@@ -79,8 +79,12 @@ module Totec
         PlayHistory.create(music_id: params[:id], created_at: Time.now)
         status 204
       end
-      
     end
+    #resource :playlists do
+    #  post '/:name' do
+    #    PlayList.create(name: params[:name], outline: params[:outline])
+    #  end
+    #end
     helpers do
       def music_exist?
         error!('404 not found', 404) unless @music
