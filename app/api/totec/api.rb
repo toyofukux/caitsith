@@ -10,39 +10,20 @@ module Totec
         if id.blank?
           @times = @times.limit(100)
         else
-          @times = @times.where("music_id = #{id}")
+          @times = @times.where(music_id: id)
         end
       end
       get '/', jbuilder: 'totec/musics.json' do
-        artist_id = params[:artist_id]
-        title = params[:title]
-        limit = params[:limit]
         start = params[:start]
-        if artist_id.present? && title.present? && limit.present? && start.present?
-          @musics = Music.order(:title).where("artist_id = #{artist_id} and title = #{title}").limit(limit).page(start)
-        elsif artist_id.present? && title.present? && limit.present?
-          @musics = Music.order(:title).where("artist_id = #{artist_id} and title = #{title}").limit(limit)
-        elsif artist_id.present? && title.present?
-          @musics = Music.order(:title).where("artist_id = #{artist_id}").where('title LIKE ?', "%#{title}%")
-        elsif artist_id.present?
-          @musics = Music.order(:title).where("artist_id = #{artist_id}")
-        elsif title.present?
-          #TODO
-          #@musics = Music.order(:title).where('title LIKE ?', "%#{title}%")
-          @musics = Music.order(:title).limit(100)
-        elsif limit.present?
-          @musics = Music.order(:title).limit(limit)
-        else
-          @musics = Music.order(:title).limit(100)
-        end
+        @musics = Music.order(:title)
+        @musics = @musics.where(artist_id: params[:artist_id])
+        #TODO : fuzzy reference
+        @musics = @musics.where(title: params[:title])
+        @musics = @musics.limit(params[:limit] || 100)
+        @musics = @musics.page(start) if start.presence
       end
       get '/:id', jbuilder: 'totec/music.json' do
-        id = params[:id]
-        if id.present?
-          @music = Music.find(id)
-        #elsif
-          #raise Totec::API::Totec404Exception.new("resource not found")
-        end
+        @music = Music.find_by(id: params[:id])
       end
       params do
         requires :artist_id, type: Integer
@@ -76,7 +57,7 @@ module Totec
         status 204
       end
       post '/:id/play' do
-        PlayHistory.create(music_id: params[:id], created_at: Time.now)
+        PlayHistory.create(music_id: params[:id])
         status 204
       end
     end
